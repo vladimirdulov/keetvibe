@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Security\JwtAuthenticator:
+        arguments:
+            $jwtManager: '@lexik_jwt_authentication.jwt_manager'
+
+    App\Service\WebSocketNotifier:
+        arguments:
+            $apiUrl: '%env(API_URL)%'
+
+    App\Service\ClickHouseService:
+        arguments:
+            $clickhouseUrl: '%env(CLICKHOUSE_URL)%'
+            $clickhouseUser: '%env(CLICKHOUSE_USER)%'
+            $clickhousePassword: '%env(CLICKHOUSE_PASSWORD)%'
