@@ -21,7 +21,7 @@
 - [x] t012 Implement login endpoint with JWT @vladimirdulov #feature ~2h
 - [x] t013 Add analytics authorization checks @vladimirdulov #security ~1h
 - [x] t014 Add room access control (participant/host) @vladimirdulov #security ~1h
-- [ ] t015 Implement logout/token invalidation @vladimirdulov #feature ~1h
+- [x] t015 Implement logout/token invalidation @vladimirdulov #feature ~1h
 - [x] t016 Fix XSS in chat message response @vladimirdulov #security ~1h
 - [ ] t017 Add rate limiting on endpoints @vladimirdulov #security ~2h
 - [ ] t018 Remove hardcoded credentials from ClickHouseService @vladimirdulov #security ~30m
