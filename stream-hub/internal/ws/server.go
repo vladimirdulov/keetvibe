@@ -14,6 +14,7 @@ import (
 	"github.com/keetvibe/stream-hub/internal/hub"
 	"github.com/keetvibe/stream-hub/internal/jwt"
 	"github.com/keetvibe/stream-hub/internal/ratelimit"
+	"github.com/keetvibe/stream-hub/internal/validation"
 	"github.com/rs/zerolog"
 )
 
@@ -150,7 +151,35 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if role == "" {
+	// Validate user ID
+	if err := validation.ValidateUserID(userID); err != nil {
+		s.log.Warn().Err(err).Str("user_id", userID).Msg("Invalid user ID")
+		conn.Close()
+		return
+	}
+
+	// Validate room ID if provided
+	if roomID != "" {
+		if err := validation.ValidateRoomID(roomID); err != nil {
+			s.log.Warn().Err(err).Str("room_id", roomID).Msg("Invalid room ID")
+			conn.Close()
+			return
+		}
+	}
+
+	// Validate and sanitize user name
+	if userName != "" {
+		if err := validation.ValidateUserName(userName); err != nil {
+			s.log.Warn().Err(err).Str("user_name", userName).Msg("Invalid user name")
+			userName = ""
+		} else {
+			userName = validation.SanitizeString(userName)
+		}
+	}
+
+	// Validate role
+	if err := validation.ValidateRole(role); err != nil {
+		s.log.Warn().Err(err).Str("role", role).Msg("Invalid role")
 		role = "viewer"
 	}
 
