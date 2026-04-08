@@ -7,7 +7,7 @@
 - [x] t001 Fix CORS/Origin validation in WebSocket upgrader @vladimirdulov #security ~1h
 - [x] t002 Implement JWT authentication on WebSocket connections @vladimirdulov #security ~2h
 - [x] t003 Fix race condition in Room.Broadcast() method @vladimirdulov #bug ~1h
-- [ ] t004 Add rate limiting for WebSocket connections @vladimirdulov #security ~2h
+- [x] t004 Add rate limiting for WebSocket connections @vladimirdulov #security ~2h
 - [ ] t005 Add input validation (roomID, userID) @vladimirdulov #security ~1h
 - [ ] t006 Remove or complete SFU implementation @vladimirdulov #cleanup ~2h
 - [ ] t007 Implement graceful shutdown for Hub @vladimirdulov #perf ~1h
