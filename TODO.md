@@ -30,7 +30,7 @@
 - [x] t021 Fix silent failure on invalid replyToId @vladimirdulov #bug ~30m
 - [x] t022 Add message moderation (delete, report, mute) @vladimirdulov #feature ~2h
 - [x] t023 Add room status transition validation @vladimirdulov #bug ~1h
-- [ ] t024 Extract duplicate UUID validation to trait @vladimirdulov #refactor ~1h
+- [x] t024 Extract duplicate UUID validation to trait @vladimirdulov #refactor ~1h
 
 ### Frontend (Vue.js) — Code Review Fixes
 
