@@ -90,7 +90,11 @@ class ChatController extends AbstractController
         if ($dto->replyToId) {
             try {
                 $message->setReplyToId(Uuid::fromString($dto->replyToId));
-            } catch (\InvalidArgumentException) {}
+            } catch (\InvalidArgumentException) {
+                return $this->json([
+                    'error' => 'Invalid reply_to_id format. Must be a valid UUID.'
+                ], Response::HTTP_BAD_REQUEST);
+            }
         }
 
         $this->chatRepository->save($message, true);
