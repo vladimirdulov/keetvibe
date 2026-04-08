@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Repository\RoomParticipantRepository;
 use App\Repository\RoomRepository;
 use App\Service\WebSocketNotifier;
+use App\Trait\UuidValidatorTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/rooms')]
 class RoomController extends AbstractController
 {
+    use UuidValidatorTrait;
+
     public function __construct(
         private readonly RoomRepository $roomRepository,
         private readonly RoomParticipantRepository $participantRepository,
