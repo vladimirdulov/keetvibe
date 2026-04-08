@@ -24,7 +24,7 @@
 - [x] t015 Implement logout/token invalidation @vladimirdulov #feature ~1h
 - [x] t016 Fix XSS in chat message response @vladimirdulov #security ~1h
 - [x] t017 Add rate limiting on endpoints @vladimirdulov #security ~2h
-- [ ] t018 Remove hardcoded credentials from ClickHouseService @vladimirdulov #security ~30m
+- [x] t018 Remove hardcoded credentials from ClickHouseService @vladimirdulov #security ~30m
 - [ ] t019 Fix N+1 queries in room and chat serialization @vladimirdulov #perf ~2h
 - [ ] t020 Add proper error logging in WebSocketNotifier @vladimirdulov #refactor ~1h
 - [ ] t021 Fix silent failure on invalid replyToId @vladimirdulov #bug ~30m
