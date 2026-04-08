@@ -120,8 +120,12 @@ class RoomController extends AbstractController
 
         $this->requireHostAccess($room, $user, 'start');
 
-        $room->setStatus(Room::STATUS_LIVE);
-        $room->setStartedAt(new \DateTimeImmutable());
+        try {
+            $room->start();
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
         $this->roomRepository->save($room, true);
 
         $this->wsNotifier->notifyRoomStarted($room);
@@ -151,8 +155,12 @@ class RoomController extends AbstractController
 
         $this->requireHostAccess($room, $user, 'end');
 
-        $room->setStatus(Room::STATUS_ENDED);
-        $room->setEndedAt(new \DateTimeImmutable());
+        try {
+            $room->end();
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
         $this->roomRepository->save($room, true);
 
         $this->wsNotifier->notifyRoomEnded($room);
