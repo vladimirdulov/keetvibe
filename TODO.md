@@ -10,6 +10,11 @@
 - [x] t004 Add rate limiting for WebSocket connections @vladimirdulov #security ~2h
 - [x] t005 Add input validation (roomID, userID) @vladimirdulov #security ~1h
 - [x] t006 Remove incomplete SFU implementation @vladimirdulov #cleanup ~2h
+- [ ] t053 Implement SFU with WebRTC for multi-party video @vladimirdulov #feature ~8h
+  - Use pion/webrtc for WebRTC
+  - Implement signaling via existing WebSocket
+  - Support multiple participants per room
+  - Handle ICE candidate exchange
 - [ ] t007 Implement graceful shutdown for Hub @vladimirdulov #perf ~1h
 - [x] t008 Fix memory leak - cleanup rooms after all clients leave @vladimirdulov #perf ~1h
 - [ ] t009 Add proper error handling with error propagation @vladimirdulov #refactor ~1h
