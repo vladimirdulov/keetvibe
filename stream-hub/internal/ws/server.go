@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -12,16 +13,18 @@ import (
 	"github.com/keetvibe/stream-hub/internal/config"
 	"github.com/keetvibe/stream-hub/internal/hub"
 	"github.com/keetvibe/stream-hub/internal/jwt"
+	"github.com/keetvibe/stream-hub/internal/ratelimit"
 	"github.com/rs/zerolog"
 )
 
 type Server struct {
-	server   *http.Server
-	hub      *hub.Hub
-	cfg      *config.Config
-	log      zerolog.Logger
-	upgrader websocket.Upgrader
-	jwtVal   *jwt.Validator
+	server     *http.Server
+	hub        *hub.Hub
+	cfg        *config.Config
+	log        zerolog.Logger
+	upgrader   websocket.Upgrader
+	jwtVal     *jwt.Validator
+	rateLimiter *ratelimit.Limiter
 }
 
 func NewServer(h *hub.Hub, cfg *config.Config, log zerolog.Logger) *Server {
@@ -33,6 +36,15 @@ func NewServer(h *hub.Hub, cfg *config.Config, log zerolog.Logger) *Server {
 		cfg: cfg,
 		log: log,
 		jwtVal: jwt.NewValidator(cfg.JWT_SECRET),
+		rateLimiter: ratelimit.NewLimiter(&ratelimit.LimiterConfig{
+			RedisURL: cfg.RedisURL,
+			Log:      log,
+			Limits: &ratelimit.Limits{
+				MaxConnectionsPerIP: cfg.RateLimitConfig.MaxConnectionsPerIP,
+				MaxMessagesPerUser: cfg.RateLimitConfig.MaxMessagesPerUser,
+				MaxRoomsPerUser:    cfg.RateLimitConfig.MaxRoomsPerUser,
+			},
+		}),
 		upgrader: websocket.Upgrader{
 			ReadBufferSize:  4096,
 			WriteBufferSize: 4096,
@@ -80,6 +92,18 @@ func (s *Server) Stop() {
 }
 
 func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
+	// Rate limit by IP
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		ip = r.RemoteAddr
+	}
+
+	if s.rateLimiter != nil && !s.rateLimiter.AllowConnection(ip) {
+		s.log.Warn().Str("ip", ip).Msg("Rate limit exceeded - too many connections")
+		http.Error(w, "Too many connections", http.StatusTooManyRequests)
+		return
+	}
+
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		s.log.Error().Err(err).Msg("WebSocket upgrade failed")
@@ -140,6 +164,7 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	client.UserName = userName
 	client.RoomID = roomID
 	client.Role = role
+	client.RateLimitFunc = s.rateLimiter.AllowMessage
 
 	go client.WritePump()
 	go client.ReadPump()

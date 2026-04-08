@@ -10,19 +10,26 @@ import (
 )
 
 type Config struct {
-	Host           string
-	WSPort         int
-	SFUPort        int
-	RedisURL       string
-	PostgresURL    string
-	RabbitMQURL    string
-	APIURL         string
-	LogLevel       string
-	STUNURL        string
-	TURNURL        string
-	ExternalIP     string
-	AllowedOrigins []string
-	JWT_SECRET     string
+	Host            string
+	WSPort          int
+	SFUPort         int
+	RedisURL        string
+	PostgresURL     string
+	RabbitMQURL     string
+	APIURL          string
+	LogLevel        string
+	STUNURL         string
+	TURNURL         string
+	ExternalIP      string
+	AllowedOrigins  []string
+	JWT_SECRET      string
+	RateLimitConfig *RateLimitConfig
+}
+
+type RateLimitConfig struct {
+	MaxConnectionsPerIP int
+	MaxMessagesPerUser  int
+	MaxRoomsPerUser     int
 }
 
 func Load() *Config {
@@ -31,19 +38,24 @@ func Load() *Config {
 	allowedOrigins := getEnv("ALLOWED_ORIGINS", "")
 
 	return &Config{
-		Host:           getEnv("HOST", "0.0.0.0"),
-		WSPort:         getEnvInt("WS_PORT", 8080),
-		SFUPort:        getEnvInt("SFU_PORT", 8000),
-		RedisURL:       getEnv("REDIS_URL", "redis://localhost:6379"),
-		PostgresURL:    getEnv("POSTGRES_URL", "postgres://localhost:5432/keetvibe"),
-		RabbitMQURL:    getEnv("RABBITMQ_URL", "amqp://localhost:5672"),
-		APIURL:         getEnv("API_URL", "http://localhost:8080"),
-		LogLevel:       getEnv("LOG_LEVEL", "info"),
-		STUNURL:        getEnv("STUN_URL", "stun:stun.l.google.com:19302"),
-		TURNURL:        getEnv("TURN_URL", ""),
-		ExternalIP:     getEnv("EXTERNAL_IP", ""),
+		Host:            getEnv("HOST", "0.0.0.0"),
+		WSPort:          getEnvInt("WS_PORT", 8080),
+		SFUPort:         getEnvInt("SFU_PORT", 8000),
+		RedisURL:        getEnv("REDIS_URL", "redis://localhost:6379"),
+		PostgresURL:     getEnv("POSTGRES_URL", "postgres://localhost:5432/keetvibe"),
+		RabbitMQURL:     getEnv("RABBITMQ_URL", "amqp://localhost:5672"),
+		APIURL:          getEnv("API_URL", "http://localhost:8080"),
+		LogLevel:        getEnv("LOG_LEVEL", "info"),
+		STUNURL:         getEnv("STUN_URL", "stun:stun.l.google.com:19302"),
+		TURNURL:         getEnv("TURN_URL", ""),
+		ExternalIP:      getEnv("EXTERNAL_IP", ""),
 		AllowedOrigins: parseOrigins(allowedOrigins),
-		JWT_SECRET:     getEnv("JWT_SECRET", ""),
+		JWT_SECRET:      getEnv("JWT_SECRET", ""),
+		RateLimitConfig: &RateLimitConfig{
+			MaxConnectionsPerIP: getEnvInt("RATE_LIMIT_CONN_PER_IP", 10),
+			MaxMessagesPerUser: getEnvInt("RATE_LIMIT_MSG_PER_USER", 20),
+			MaxRoomsPerUser:    getEnvInt("RATE_LIMIT_ROOMS_PER_USER", 5),
+		},
 	}
 }
 
