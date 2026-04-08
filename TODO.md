@@ -26,7 +26,7 @@
 - [x] t017 Add rate limiting on endpoints @vladimirdulov #security ~2h
 - [x] t018 Remove hardcoded credentials from ClickHouseService @vladimirdulov #security ~30m
 - [x] t019 Fix N+1 queries in room and chat serialization @vladimirdulov #perf ~2h
-- [ ] t020 Add proper error logging in WebSocketNotifier @vladimirdulov #refactor ~1h
+- [x] t020 Add proper error logging in WebSocketNotifier @vladimirdulov #refactor ~1h
 - [ ] t021 Fix silent failure on invalid replyToId @vladimirdulov #bug ~30m
 - [ ] t022 Add message moderation (delete, report, mute) @vladimirdulov #feature ~2h
 - [ ] t023 Add room status transition validation @vladimirdulov #bug ~1h
