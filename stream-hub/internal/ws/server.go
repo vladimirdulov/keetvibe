@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/keetvibe/stream-hub/internal/config"
 	"github.com/keetvibe/stream-hub/internal/hub"
+	"github.com/keetvibe/stream-hub/internal/jwt"
 	"github.com/rs/zerolog"
 )
 
@@ -20,6 +21,7 @@ type Server struct {
 	cfg      *config.Config
 	log      zerolog.Logger
 	upgrader websocket.Upgrader
+	jwtVal   *jwt.Validator
 }
 
 func NewServer(h *hub.Hub, cfg *config.Config, log zerolog.Logger) *Server {
@@ -30,6 +32,7 @@ func NewServer(h *hub.Hub, cfg *config.Config, log zerolog.Logger) *Server {
 		hub: h,
 		cfg: cfg,
 		log: log,
+		jwtVal: jwt.NewValidator(cfg.JWT_SECRET),
 		upgrader: websocket.Upgrader{
 			ReadBufferSize:  4096,
 			WriteBufferSize: 4096,
@@ -86,9 +89,42 @@ func (s *Server) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	token := query.Get("token")
 	roomID := query.Get("room")
-	userID := query.Get("user_id")
-	userName := query.Get("user_name")
-	role := query.Get("role")
+
+	// Validate JWT token if JWT_SECRET is configured
+	var userID, userName, role string
+	if s.cfg.JWT_SECRET != "" {
+		if token == "" {
+			s.log.Warn().Msg("JWT token missing from WebSocket request")
+			conn.Close()
+			return
+		}
+
+		claims, err := s.jwtVal.ValidateToken(token)
+		if err != nil {
+			s.log.Warn().Err(err).Msg("JWT token validation failed")
+			conn.Close()
+			return
+		}
+
+		userID = claims.UserID
+		userName = claims.UserName
+		role = claims.Role
+		// Override roomID from token if present
+		if claims.RoomID != "" {
+			roomID = claims.RoomID
+		}
+	} else {
+		// Fallback to query params if no JWT_SECRET configured
+		userID = query.Get("user_id")
+		userName = query.Get("user_name")
+		role = query.Get("role")
+	}
+
+	if userID == "" {
+		s.log.Warn().Msg("User ID is required for WebSocket connection")
+		conn.Close()
+		return
+	}
 
 	if role == "" {
 		role = "viewer"
