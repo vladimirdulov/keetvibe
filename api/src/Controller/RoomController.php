@@ -38,11 +38,7 @@ class RoomController extends AbstractController
         } elseif ($status === 'upcoming') {
             $rooms = $this->roomRepository->findUpcoming($limit);
         } else {
-            $rooms = $this->roomRepository->findBy(
-                [],
-                ['createdAt' => 'DESC'],
-                $limit
-            );
+            $rooms = $this->roomRepository->findAllWithEagerLoading($limit);
         }
 
         return $this->json([
