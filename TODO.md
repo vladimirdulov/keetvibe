@@ -4,7 +4,7 @@
 
 ### StreamHub (Go) — Code Review Fixes
 
-- [ ] t001 Fix CORS/Origin validation in WebSocket upgrader @vladimirdulov #security ~1h
+- [x] t001 Fix CORS/Origin validation in WebSocket upgrader @vladimirdulov #security ~1h
 - [ ] t002 Implement JWT authentication on WebSocket connections @vladimirdulov #security ~2h
 - [ ] t003 Fix race condition in Room.Broadcast() method @vladimirdulov #bug ~1h
 - [ ] t004 Add rate limiting for WebSocket connections @vladimirdulov #security ~2h
