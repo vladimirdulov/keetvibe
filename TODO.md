@@ -9,7 +9,7 @@
 - [x] t003 Fix race condition in Room.Broadcast() method @vladimirdulov #bug ~1h
 - [x] t004 Add rate limiting for WebSocket connections @vladimirdulov #security ~2h
 - [x] t005 Add input validation (roomID, userID) @vladimirdulov #security ~1h
-- [ ] t006 Remove or complete SFU implementation @vladimirdulov #cleanup ~2h
+- [x] t006 Remove incomplete SFU implementation @vladimirdulov #cleanup ~2h
 - [ ] t007 Implement graceful shutdown for Hub @vladimirdulov #perf ~1h
 - [x] t008 Fix memory leak - cleanup rooms after all clients leave @vladimirdulov #perf ~1h
 - [ ] t009 Add proper error handling with error propagation @vladimirdulov #refactor ~1h
