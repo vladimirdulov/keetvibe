@@ -15,7 +15,7 @@
   - Implement signaling via existing WebSocket
   - Support multiple participants per room
   - Handle ICE candidate exchange
-- [ ] t007 Implement graceful shutdown for Hub @vladimirdulov #perf ~1h
+- [x] t007 Implement graceful shutdown for Hub @vladimirdulov #perf ~1h
 - [x] t008 Fix memory leak - cleanup rooms after all clients leave @vladimirdulov #perf ~1h
 - [ ] t009 Add proper error handling with error propagation @vladimirdulov #refactor ~1h
 - [ ] t010 Secure internal API endpoints @vladimirdulov #security ~1h
