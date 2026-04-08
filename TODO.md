@@ -17,7 +17,7 @@
 
 ### API (PHP/Symfony) — Code Review Fixes
 
-- [ ] t011 Fix SQL injection in ClickHouseService @vladimirdulov #security ~2h
+- [x] t011 Fix SQL injection in ClickHouseService @vladimirdulov #security ~2h
 - [ ] t012 Implement login endpoint with JWT @vladimirdulov #feature ~2h
 - [ ] t013 Add analytics authorization checks @vladimirdulov #security ~1h
 - [ ] t014 Add room access control (participant/host) @vladimirdulov #security ~1h
