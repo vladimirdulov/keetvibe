@@ -34,7 +34,7 @@
 
 ### Frontend (Vue.js) — Code Review Fixes
 
-- [ ] t025 Fix XSS in chat messages (sanitize user content) @vladimirdulov #security ~1h
+- [x] t025 Fix XSS in chat messages (sanitize user content) @vladimirdulov #security ~1h
 - [ ] t026 Fix XSS in room titles and descriptions @vladimirdulov #security ~1h
 - [ ] t027 Move auth tokens to httpOnly secure cookies @vladimirdulov #security ~2h
 - [ ] t028 Add authentication requirement for RoomViewer @vladimirdulov #security ~1h
