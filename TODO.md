@@ -19,7 +19,7 @@
 
 - [x] t011 Fix SQL injection in ClickHouseService @vladimirdulov #security ~2h
 - [x] t012 Implement login endpoint with JWT @vladimirdulov #feature ~2h
-- [ ] t013 Add analytics authorization checks @vladimirdulov #security ~1h
+- [x] t013 Add analytics authorization checks @vladimirdulov #security ~1h
 - [ ] t014 Add room access control (participant/host) @vladimirdulov #security ~1h
 - [ ] t015 Implement logout/token invalidation @vladimirdulov #feature ~1h
 - [x] t016 Fix XSS in chat message response @vladimirdulov #security ~1h
