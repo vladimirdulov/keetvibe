@@ -23,6 +23,8 @@ type Hub struct {
 	mu         sync.RWMutex
 	ctx        context.Context
 	cancel     context.CancelFunc
+	done       chan struct{} // Signals shutdown complete
+	running    bool
 }
 
 type Message struct {
@@ -53,6 +55,8 @@ func NewHub(cfg *config.Config, log zerolog.Logger) *Hub {
 		ctx:        ctx,
 		cancel:     cancel,
 		redis:      rdb,
+		done:       make(chan struct{}),
+		running:    true,
 	}
 
 	go h.pingRedis()
@@ -66,7 +70,9 @@ func (h *Hub) Start() {
 	for {
 		select {
 		case <-h.ctx.Done():
+			h.shutdown()
 			h.log.Info().Msg("Hub stopped")
+			close(h.done)
 			return
 
 		case client := <-h.register:
@@ -121,7 +127,49 @@ func (h *Hub) Start() {
 }
 
 func (h *Hub) Stop() {
+	h.mu.Lock()
+	if !h.running {
+		h.mu.Unlock()
+		return
+	}
+	h.running = false
+	h.mu.Unlock()
+
 	h.cancel()
+	<-h.done // Wait for shutdown to complete
+}
+
+// shutdown handles graceful shutdown of all resources
+func (h *Hub) shutdown() {
+	h.log.Info().Msg("Shutting down Hub...")
+
+	// Close all rooms
+	h.mu.Lock()
+	for _, room := range h.rooms {
+		room.Stop()
+	}
+	h.rooms = make(map[string]*Room)
+	h.mu.Unlock()
+
+	// Close all client connections
+	h.mu.Lock()
+	for client := range h.clients {
+		close(client.Send)
+	}
+	h.clients = make(map[*Client]bool)
+	h.mu.Unlock()
+
+	// Close Redis connection
+	if h.redis != nil {
+		h.redis.Close()
+	}
+
+	// Close channels
+	close(h.register)
+	close(h.unregister)
+	close(h.broadcast)
+
+	h.log.Info().Msg("Hub shutdown complete")
 }
 
 func (h *Hub) getOrCreateRoom(roomID string) *Room {
